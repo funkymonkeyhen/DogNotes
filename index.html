@@ -7,11 +7,11 @@
 <title>Dog Notes</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-:root{--bg:#e5cd6c;--panel:#f9f3b9;--ink:#2f1313;--mute:#5c402b;--line:#8c6239;--acc:#ae6427;--rec:#2f1313}
+:root{--bg:#e5cd6c;--panel:#f9f3b9;--ink:#2f1313;--mute:#5c402b;--line:#8c6239;--acc:#ae6427;--rec:#2f1313;--box-alpha:.42}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background-color:var(--bg);background-image:url("https://thumbs.dreamstime.com/b/grappig-dansende-hond-met-trucjes-actieve-dans-kleine-witte-achtergrond-huisdier-161672443.jpg");background-repeat:repeat;background-size:var(--dog-size,65px) auto;background-position:top left;color:var(--ink);font:14px/1.5 sans-serif;display:flex;flex-direction:column}
-header{background:rgba(249,243,185,.68);border-bottom:1px solid rgba(47,19,19,.45);padding:12px 18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+header{background:rgba(249,243,185,var(--box-alpha));border-bottom:1px solid rgba(47,19,19,.45);padding:12px 18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 #title{flex:1 1 220px;font-weight:600}
 #key{flex:1 1 200px}
 button:disabled{opacity:.55}
@@ -26,7 +26,7 @@ button:disabled{opacity:.55}
 @keyframes p{50%{opacity:.35}}
 @media (prefers-reduced-motion:reduce){.live .dot{animation:none}}
 main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(260px,2fr) 3fr;gap:14px;padding:14px}
-section{background:rgba(249,243,185,.66);border:1px solid rgba(47,19,19,.45);border-radius:8px;display:flex;flex-direction:column;min-height:0}
+section{background:rgba(249,243,185,var(--box-alpha));border:1px solid rgba(47,19,19,.45);border-radius:8px;display:flex;flex-direction:column;min-height:0}
 .hd{padding:6px 16px;min-height:44px;font-size:.93em;font-weight:600;color:var(--mute);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}
 .hd h2{margin:0;font-size:inherit;font-weight:inherit}
 .hd button{padding:2px 6px;font-size:.9em}
@@ -42,11 +42,11 @@ section{background:rgba(249,243,185,.66);border:1px solid rgba(47,19,19,.45);bor
 #notes li{margin:.15em 0}
 #notes code{font-family:ui-monospace,monospace;font-size:.85em;background:rgba(249,243,185,.8);padding:1px 4px;border-radius:3px}
 .empty{color:var(--mute);font-size:14px}
-#msg{padding:6px 18px;font-size:13px;color:var(--rec);min-height:0;background:rgba(249,243,185,.58)}
+#msg{padding:6px 18px;font-size:13px;color:var(--rec);min-height:0;background:rgba(249,243,185,var(--box-alpha))}
 .skip{position:absolute;left:-9999px}
 .skip:focus{left:8px;top:8px;background:#fff;color:#000;padding:8px 12px;z-index:9;border-radius:6px}
 .brand{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 18px 4px;background:rgba(229,205,108,.56)}
-.brand-title{display:flex;align-items:center;gap:10px;background:rgba(249,243,185,.74);padding:5px 9px}
+.brand-title{display:flex;align-items:center;gap:10px;background:rgba(249,243,185,var(--box-alpha));padding:5px 9px}
 .brand-title img{width:44px;height:44px;object-fit:contain;background:#fff}
 .brand h1{margin:0;font:600 1.9em/1.1 sans-serif}
 .brand p{margin:2px 0 0;color:var(--mute);font-style:italic}
@@ -55,6 +55,10 @@ footer{padding:8px 18px 12px;font-size:.85em;color:var(--mute);max-height:40vh;o
 footer summary{cursor:pointer;color:#f9f3b9;font-weight:500;width:max-content}
 footer summary:focus-visible{outline:2px dotted Highlight;outline-offset:2px}
 footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
+#pageControls{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:20;display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(249,243,185,.94);border:1px solid var(--line);border-radius:6px;box-shadow:0 1px 5px rgba(47,19,19,.25)}
+#pageControls label{white-space:nowrap}
+#pageControls input[type=range]{width:150px}
+@media(max-width:760px){#pageControls{width:calc(100% - 20px);justify-content:center;flex-wrap:wrap}#pageControls input[type=range]{flex:1;min-width:120px}}
 @media(max-width:760px){main{grid-template-columns:1fr;grid-template-rows:1fr 1.4fr}}
 </style>
 </head>
@@ -101,7 +105,7 @@ footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
   <button id="stop" class="stop" disabled>Stop &amp; save PDF</button>
   <button id="pdf" class="ghost" disabled>Save PDF</button>
   <div id="meterbox"><div id="meter" role="meter" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="100"><i></i></div><span id="mhint"></span></div>
-  <div><label for="dogSize">Dog background size: </label><input id="dogSize" type="range" min="30" max="180" value="65" step="5" aria-label="Dog background size"></div>
+  <div><label for="dogSize">Dog background size: </label><input id="dogSize" type="range" min="25" max="600" value="65" step="5" aria-label="Dog background size"></div>
   <div id="status" role="status"><span class="dot"></span><span id="st">Idle</span></div>
 </header>
 <div id="msg" role="alert"></div>
@@ -124,17 +128,33 @@ footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
     </ul>
   </details>
 </footer>
+<div id="pageControls" aria-label="Page appearance controls">
+  <label for="boxTransparency">Box transparency:</label>
+  <input id="boxTransparency" type="range" min="10" max="95" value="42" step="1" aria-label="Box transparency">
+  
+  <button id="refreshDog" type="button">Refresh dog</button>
+  <button id="barkButton" type="button">Bark</button>
+  <audio id="barkAudio" src="bark.mp3" preload="auto"></audio>
+</div>
 <script>
 const dogSize = document.getElementById("dogSize");
+const boxTransparency = document.getElementById("boxTransparency");
+const refreshDogButton = document.getElementById("refreshDog");
 function applyDogSize(){
   document.documentElement.style.setProperty("--dog-size", dogSize.value + "px");
 }
+function applyBoxTransparency(){
+  const alpha = Number(boxTransparency.value) / 100;
+  document.documentElement.style.setProperty("--box-alpha", alpha.toFixed(2));
+}
 dogSize.addEventListener("input", applyDogSize);
+boxTransparency.addEventListener("input", applyBoxTransparency);
 applyDogSize();
+applyBoxTransparency();
 
-// Load a different random dog from the Dog CEO public dog-image API each time the page opens.
-// The API returns image URLs hosted on images.dog.ceo.
-(async function loadRandomDog(){
+// Get a random dog from the Dog CEO public dog-image API.
+async function loadRandomDog(){
+  refreshDogButton.disabled = true;
   try {
     const response = await fetch("https://dog.ceo/api/breeds/image/random", {cache:"no-store"});
     if (!response.ok) throw new Error("Dog image request failed");
@@ -147,8 +167,19 @@ applyDogSize();
     if (favicon) favicon.href = data.message;
   } catch (e) {
     // Keep the built-in dog image if the internet/API is unavailable.
+  } finally {
+    refreshDogButton.disabled = false;
   }
-})();
+}
+refreshDogButton.addEventListener("click", loadRandomDog);
+
+const barkButton = document.getElementById("barkButton");
+const barkAudio = document.getElementById("barkAudio");
+barkButton.addEventListener("click", () => {
+  barkAudio.currentTime = 0;
+  barkAudio.play().catch(() => {});
+});
+loadRandomDog();
 
 const $=id=>document.getElementById(id);
 const SYSTEM=`You are an expert student note-taker working live during a lecture.
