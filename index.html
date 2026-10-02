@@ -88,7 +88,8 @@ footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
     <option value="local">On-device Whisper (works in Firefox)</option>
     <option value="cloud">Cloud Whisper (Groq or OpenAI key)</option>
   </select>
-  <input id="key" type="password" placeholder="Paste API key (not saved)" aria-label="API key" autocomplete="off">
+  <input id="key" type="password" placeholder="Paste API key" aria-label="API key" autocomplete="current-password">
+  <label><input id="rememberKey" type="checkbox"> Remember key on this device</label>
   <input id="base" hidden placeholder="Base URL, e.g. https://api.example.com/v1" aria-label="Base URL" style="flex:1 1 220px">
   <select id="interval" aria-label="Notes update interval">
     <option value="60">Notes every 1 min</option>
@@ -116,7 +117,7 @@ footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
     <ul>
       <li><b>No warranty.</b> Dog Notes is provided “as is” and “as available,” without warranties of any kind. You use it at your own risk. To the fullest extent the law allows, its creator is not liable for any loss or damage, including missed, incomplete or inaccurate notes, or any grades, decisions or outcomes that depend on them.</li>
       <li><b>AI can be wrong.</b> Speech recognition and AI summaries can be inaccurate, incomplete or misleading. Do not rely on them for medical, legal, financial or safety decisions.</li>
-      <li><b>Your data.</b> Your browser’s speech recognition service turns audio into text (in Chrome, audio is sent to Google; with on-device Whisper it stays on your computer; with cloud Whisper it goes to Groq or OpenAI). The transcript text is then sent to the AI provider you choose (for example Google, OpenAI, Anthropic or Meta) using your own API key, under that provider’s terms and privacy policy. If you pick a local model, that text stays on your computer. This page has no server of its own and does not save your API key, transcript or notes. It only remembers your text-size and contrast choices in your browser. Anything you download is yours to store safely.</li>
+      <li><b>Your data.</b> Your browser’s speech recognition service turns audio into text (in Chrome, audio is sent to Google; with on-device Whisper it stays on your computer; with cloud Whisper it goes to Groq or OpenAI). The transcript text is then sent to the AI provider you choose (for example Google, OpenAI, Anthropic or Meta) using your own API key, under that provider’s terms and privacy policy. If you pick a local model, that text stays on your computer. This page has no server of its own and does not save your API key, transcript or notes unless you explicitly enable “Remember key on this device”; then the API key is stored in this browser’s local storage. It only remembers your text-size and contrast choices in your browser. Anything you download is yours to store safely.</li>
       <li><b>Permission to record.</b> Recording or transcribing people may be regulated by law and by school or venue rules. You are responsible for getting any permission you need and for respecting copyright and school policies on lecture materials.</li>
       <li><b>Your API key.</b> You are responsible for your own key and any usage limits or charges on it. Keep it private.</li>
       <li>This notice is a general statement and is not legal advice.</li>
@@ -162,6 +163,21 @@ Return the COMPLETE updated notes in Markdown, merging the new material in:
 
 let rec=null,running=false,lines=[],pending=[],notesMd="",busy=false,timer=null;
 let prov=null,KEY="",models=[],mi=0,label="",paused=false;
+
+// Optional local browser storage for the API key. This stays on this device/browser.
+function loadRememberedKey(){
+  try{
+    const saved=localStorage.getItem("dn_api_key");
+    if(saved){$("key").value=saved;$("rememberKey").checked=true;}
+  }catch(e){}
+}
+function saveRememberedKey(){
+  try{
+    if($("rememberKey").checked && $("key").value.trim()) localStorage.setItem("dn_api_key",$("key").value.trim());
+    else localStorage.removeItem("dn_api_key");
+  }catch(e){}
+}
+
 
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 
@@ -348,6 +364,7 @@ function rankModels(id,list){
 }
 async function connect(){
   const key=$("key").value.trim(),sel=$("prov").value;
+  saveRememberedKey();
   const id=sel==="auto"?guess(key):sel;
   if(!key&&id!=="local")throw new Error("Paste your API key first.");
   if(!id)throw new Error("I can't tell which service this key is for. Pick the provider from the dropdown.");
@@ -518,9 +535,12 @@ function togglePause(){
 $("prov").onchange=()=>{
   const v=$("prov").value,b=$("base");b.hidden=!(v==="custom"||v==="local");
   b.value=v==="local"?P.local.base:"";
-  $("key").placeholder=v==="local"?"API key (optional for local models)":"Paste API key (not saved)";
+  $("key").placeholder=v==="local"?"API key (optional for local models)":"Paste API key";
 };
 $("pause").onclick=togglePause;$("txt").onclick=downloadTranscript;
+$("rememberKey").onchange=saveRememberedKey;
+$("key").addEventListener("input",()=>{if($("rememberKey").checked)saveRememberedKey()});
+loadRememberedKey();
 $("start").onclick=start;$("stop").onclick=()=>stop(true);$("pdf").onclick=savePdf;
 </script>
 </body>
