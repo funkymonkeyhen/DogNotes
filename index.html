@@ -10,7 +10,7 @@
 :root{--bg:#e9edf1;--panel:#fff;--ink:#17222d;--mute:#64727f;--line:#d3dbe2;--acc:#0b5d73;--rec:#c8372d}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{background-color:var(--bg);background-image:url("https://thumbs.dreamstime.com/b/grappig-dansende-hond-met-trucjes-actieve-dans-kleine-witte-achtergrond-huisdier-161672443.jpg");background-repeat:repeat;background-size:65px auto;background-position:top left;color:var(--ink);font:14px/1.5 sans-serif;display:flex;flex-direction:column}
+body{background-color:var(--bg);background-image:url("https://thumbs.dreamstime.com/b/grappig-dansende-hond-met-trucjes-actieve-dans-kleine-witte-achtergrond-huisdier-161672443.jpg");background-repeat:repeat;background-size:var(--dog-size,65px) auto;background-position:top left;color:var(--ink);font:14px/1.5 sans-serif;display:flex;flex-direction:column}
 header{background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);padding:12px 18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 #title{flex:1 1 220px;font-weight:600}
 #key{flex:1 1 200px}
@@ -100,6 +100,7 @@ footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
   <button id="stop" class="stop" disabled>Stop &amp; save PDF</button>
   <button id="pdf" class="ghost" disabled>Save PDF</button>
   <div id="meterbox"><div id="meter" role="meter" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="100"><i></i></div><span id="mhint"></span></div>
+  <div><label for="dogSize">Dog background size: </label><input id="dogSize" type="range" min="30" max="180" value="65" step="5" aria-label="Dog background size"></div>
   <div id="status" role="status"><span class="dot"></span><span id="st">Idle</span></div>
 </header>
 <div id="msg" role="alert"></div>
@@ -123,6 +124,13 @@ footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
   </details>
 </footer>
 <script>
+const dogSize = document.getElementById("dogSize");
+function applyDogSize(){
+  document.documentElement.style.setProperty("--dog-size", dogSize.value + "px");
+}
+dogSize.addEventListener("input", applyDogSize);
+applyDogSize();
+
 // Load a different random dog from the Dog CEO public dog-image API each time the page opens.
 // The API returns image URLs hosted on images.dog.ceo.
 (async function loadRandomDog(){
