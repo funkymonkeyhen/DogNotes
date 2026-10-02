@@ -3,24 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/jpeg" href="https://thumbs.dreamstime.com/b/grappig-dansende-hond-met-trucjes-actieve-dans-kleine-witte-achtergrond-huisdier-161672443.jpg">
 <title>Dog Notes</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%90%B6%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{--bg:#e9edf1;--panel:#fff;--ink:#17222d;--mute:#64727f;--line:#d3dbe2;--acc:#0b5d73;--rec:#c8372d}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{background:var(--bg) url("https://thumbs.dreamstime.com/b/grappig-dansende-hond-met-trucjes-actieve-dans-kleine-witte-achtergrond-huisdier-161672443.jpg") repeat;background-size:140px auto;background-position:0 0;color:var(--ink);font:calc(14px*var(--z,1))/1.5 "IBM Plex Sans",system-ui,sans-serif;display:flex;flex-direction:column}
-header{background:var(--panel);border-bottom:1px solid var(--line);padding:12px 18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-header input,header select{font:inherit;border:1px solid var(--line);border-radius:6px;padding:7px 9px;background:#fff;color:var(--ink);min-width:0}
+body{background-color:var(--bg);background-image:url("https://thumbs.dreamstime.com/b/grappig-dansende-hond-met-trucjes-actieve-dans-kleine-witte-achtergrond-huisdier-161672443.jpg");background-repeat:repeat;background-size:90px auto;background-position:top left;color:var(--ink);font:14px/1.5 sans-serif;display:flex;flex-direction:column}
+header{background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);padding:12px 18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 #title{flex:1 1 220px;font-weight:600}
 #key{flex:1 1 200px}
-button{font:inherit;font-weight:500;border:1px solid var(--acc);background:var(--acc);color:#fff;border-radius:6px;padding:8px 14px;cursor:pointer}
-button.ghost{background:#fff;color:var(--acc)}
-button.stop{background:var(--rec);border-color:var(--rec)}
-button:disabled{opacity:.45;cursor:not-allowed}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+button:disabled{opacity:.55}
 #meterbox{display:flex;align-items:center;gap:8px}
 #meter{width:110px;height:10px;border-radius:5px;background:var(--line);overflow:hidden}
 #meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2f9e6b,#d9a21b 70%,var(--rec));background-size:110px 100%}
@@ -32,51 +27,43 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 @keyframes p{50%{opacity:.35}}
 @media (prefers-reduced-motion:reduce){.live .dot{animation:none}}
 main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(260px,2fr) 3fr;gap:14px;padding:14px}
-section{background:var(--panel);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;min-height:0}
+section{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;min-height:0}
 .hd{padding:6px 16px;min-height:44px;font-size:.93em;font-weight:600;color:var(--mute);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}
 .hd h2{margin:0;font-size:inherit;font-weight:inherit}
-.hd button{padding:4px 10px;font-size:.9em}
+.hd button{padding:2px 6px;font-size:.9em}
 .body{flex:1;overflow:auto;padding:14px 18px}
-#tx p{margin:0 0 10px;font-size:calc(13.5px*var(--z,1))}
+#tx p{margin:0 0 10px;font-size:13.5px}
 #tx time{color:var(--mute);font-size:.85em;margin-right:6px}
 #interim{color:var(--mute);font-style:italic}
-#notes{font-family:Newsreader,Georgia,serif;font-size:calc(17px*var(--z,1));line-height:1.6;max-width:68ch}
+#notes{font-size:17px;line-height:1.6;max-width:68ch}
 #notes h1{font-size:1.53em;margin:.2em 0 .4em}
 #notes h2{font-size:1.24em;margin:1.3em 0 .3em;padding:0;border:0;display:block;color:var(--acc);font-weight:600}
 #notes h3{font-size:1.06em;margin:1em 0 .2em}
 #notes ul{margin:.2em 0 .6em;padding-left:1.2em}
 #notes li{margin:.15em 0}
 #notes code{font-family:ui-monospace,monospace;font-size:.85em;background:#eef2f5;padding:1px 4px;border-radius:3px}
-.empty{color:var(--mute);font-family:"IBM Plex Sans",sans-serif;font-size:calc(14px*var(--z,1))}
-#msg{padding:6px 18px;font-size:13px;color:var(--rec);min-height:0}
+.empty{color:var(--mute);font-size:14px}
+#msg{padding:6px 18px;font-size:13px;color:var(--rec);min-height:0;background:rgba(255,255,255,.92)}
 .skip{position:absolute;left:-9999px}
 .skip:focus{left:8px;top:8px;background:#fff;color:#000;padding:8px 12px;z-index:9;border-radius:6px}
-.brand{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 18px 4px}
-.brand h1{margin:0;font:600 1.9em/1.1 Newsreader,Georgia,serif}
+.brand{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 18px 4px;background:rgba(255,255,255,.92)}
+.brand-title{display:flex;align-items:center;gap:10px;background:#fff;padding:5px 9px}
+.brand-title img{width:44px;height:44px;object-fit:contain;background:#fff}
+.brand h1{margin:0;font:600 1.9em/1.1 sans-serif}
 .brand p{margin:2px 0 0;color:var(--mute);font-style:italic}
-.a11y{display:flex;gap:6px}
-.a11y button{padding:5px 10px}
-.a11y button[aria-pressed="true"]{background:var(--acc);color:#fff}
 .body:focus-visible,main:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
-footer{padding:8px 18px 12px;font-size:.85em;color:var(--mute);max-height:40vh;overflow:auto}
+footer{padding:8px 18px 12px;font-size:.85em;color:var(--mute);max-height:40vh;overflow:auto;background:rgba(255,255,255,.9)}
 footer summary{cursor:pointer;color:var(--acc);font-weight:500;width:max-content}
-footer summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+footer summary:focus-visible{outline:2px dotted Highlight;outline-offset:2px}
 footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
-body.hc{--bg:#fff;--panel:#fff;--ink:#000;--mute:#262626;--line:#000;--acc:#003a8c;--rec:#a80000}
-body.hc button,body.hc header input,body.hc header select{border-width:2px}
-body.hc button:disabled{opacity:.6}
 @media(max-width:760px){main{grid-template-columns:1fr;grid-template-rows:1fr 1.4fr}}
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to transcript and notes</a>
 <div class="brand">
-  <div><h1>🐶 Dog Notes</h1><p>If your dog ever starts talking to you, you better take good notes!</p></div>
-  <div class="a11y" role="group" aria-label="Accessibility options">
-    <button id="zm" class="ghost" aria-label="Decrease text size">A−</button>
-    <button id="zp" class="ghost" aria-label="Increase text size">A+</button>
-    <button id="hc" class="ghost" aria-pressed="false">High contrast</button>
-  </div>
+  <div class="brand-title"><img id="brandDog" src="https://thumbs.dreamstime.com/b/grappig-dansende-hond-met-trucjes-actieve-dans-kleine-witte-achtergrond-huisdier-161672443.jpg" alt="" aria-hidden="true"><div><h1>Dog Notes</h1><p>If your dog ever starts talking to you, you better take good notes!</p></div></div>
+
 </div>
 <header>
   <input id="title" value="Lecture Notes" aria-label="Lecture title">
@@ -501,18 +488,7 @@ function togglePause(){
   if(paused){try{rec.stop()}catch(e){}showInterim("");flushAudio();stopMeter();setStatus("Paused · "+label,false);$("pause").textContent="Resume"}
   else{if(engine==="browser")startRec();startMeter();setStatus("Listening · "+label,true);$("pause").textContent="Pause"}
 }
-let zoom=1,hc=false;
-try{const o=JSON.parse(localStorage.getItem("dn_a11y")||"{}");zoom=o.zoom||1;hc=!!o.hc}catch(e){}
-function applyA11y(){
-  document.documentElement.style.setProperty("--z",zoom);
-  document.body.classList.toggle("hc",hc);$("hc").setAttribute("aria-pressed",hc);
-  $("zm").disabled=zoom<=0.8;$("zp").disabled=zoom>=1.6;
-  try{localStorage.setItem("dn_a11y",JSON.stringify({zoom,hc}))}catch(e){}
-}
-$("zp").onclick=()=>{zoom=Math.min(1.6,+(zoom+.1).toFixed(1));applyA11y()};
-$("zm").onclick=()=>{zoom=Math.max(.8,+(zoom-.1).toFixed(1));applyA11y()};
-$("hc").onclick=()=>{hc=!hc;applyA11y()};
-applyA11y();
+
 $("prov").onchange=()=>{
   const v=$("prov").value,b=$("base");b.hidden=!(v==="custom"||v==="local");
   b.value=v==="local"?P.local.base:"";
