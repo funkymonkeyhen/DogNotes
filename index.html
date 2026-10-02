@@ -5,13 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/jpeg" href="https://thumbs.dreamstime.com/b/grappig-dansende-hond-met-trucjes-actieve-dans-kleine-witte-achtergrond-huisdier-161672443.jpg">
 <title>Dog Notes</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{--bg:#e9edf1;--panel:#fff;--ink:#17222d;--mute:#64727f;--line:#d3dbe2;--acc:#0b5d73;--rec:#c8372d}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{background-color:var(--bg);background-image:url("https://thumbs.dreamstime.com/b/grappig-dansende-hond-met-trucjes-actieve-dans-kleine-witte-achtergrond-huisdier-161672443.jpg");background-repeat:repeat;background-size:90px auto;background-position:top left;color:var(--ink);font:14px/1.5 sans-serif;display:flex;flex-direction:column}
+body{background-color:var(--bg);background-image:url("https://thumbs.dreamstime.com/b/grappig-dansende-hond-met-trucjes-actieve-dans-kleine-witte-achtergrond-huisdier-161672443.jpg");background-repeat:repeat;background-size:65px auto;background-position:top left;color:var(--ink);font:14px/1.5 sans-serif;display:flex;flex-direction:column}
 header{background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);padding:12px 18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 #title{flex:1 1 220px;font-weight:600}
 #key{flex:1 1 200px}
@@ -31,7 +30,7 @@ section{background:rgba(255,255,255,.96);border:1px solid var(--line);border-rad
 .hd{padding:6px 16px;min-height:44px;font-size:.93em;font-weight:600;color:var(--mute);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}
 .hd h2{margin:0;font-size:inherit;font-weight:inherit}
 .hd button{padding:2px 6px;font-size:.9em}
-.body{flex:1;overflow:auto;padding:14px 18px}
+.body{flex:1;overflow:auto;padding:14px 18px;background:rgba(255,255,255,.94)}
 #tx p{margin:0 0 10px;font-size:13.5px}
 #tx time{color:var(--mute);font-size:.85em;margin-right:6px}
 #interim{color:var(--mute);font-style:italic}
@@ -109,6 +108,7 @@ footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
   <section><div class="hd"><h2>Notes</h2><span id="upd" role="status"></span></div><div class="body" tabindex="0" aria-label="Notes"><div id="notes"><p class="empty">Notes appear here and update as the lecture goes on.</p></div></div></section>
 </main>
 <footer>
+  <p>Dog pictures shown in the background and header are loaded from the internet and are not stored in or supplied by this page. A different random dog is requested each time the page opens.</p>
   <p>Dog Notes is an independent hobby tool, not affiliated with Google, OpenAI, Anthropic, Meta, YouTube, or any AI provider or school. Notes are written by AI and may contain mistakes, so check them against official course material.</p>
   <details>
     <summary>Full disclaimer and privacy</summary>
@@ -123,6 +123,24 @@ footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
   </details>
 </footer>
 <script>
+// Load a different random dog from the Dog CEO public dog-image API each time the page opens.
+// The API returns image URLs hosted on images.dog.ceo.
+(async function loadRandomDog(){
+  try {
+    const response = await fetch("https://dog.ceo/api/breeds/image/random", {cache:"no-store"});
+    if (!response.ok) throw new Error("Dog image request failed");
+    const data = await response.json();
+    if (!data.message) throw new Error("No dog image returned");
+    document.body.style.backgroundImage = `url("${data.message}")`;
+    const brandDog = document.getElementById("brandDog");
+    if (brandDog) brandDog.src = data.message;
+    const favicon = document.querySelector('link[rel="icon"]');
+    if (favicon) favicon.href = data.message;
+  } catch (e) {
+    // Keep the built-in dog image if the internet/API is unavailable.
+  }
+})();
+
 const $=id=>document.getElementById(id);
 const SYSTEM=`You are an expert student note-taker working live during a lecture.
 You receive the notes written so far and a new chunk of raw speech-to-text transcript (from a microphone picking up a TV, so it may contain recognition errors, filler words, and ads or sponsor reads that you should ignore).
