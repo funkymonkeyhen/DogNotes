@@ -35,7 +35,7 @@
 <div id="browserWarning" class="browser-warning" role="dialog" aria-modal="true" aria-labelledby="browserWarningTitle">
   <div class="browser-warning-box">
     <h2 id="browserWarningTitle">Browser speech recognition isn't available</h2>
-    <p>This browser does not provide the built-in speech recognition used by Browser speech.</p>
+    <p>For the best experience with built-in browser speech, use Chrome or Edge. Firefox does not provide that built-in speech recognition.</p>
     <p>You can still use <b>On-device Whisper</b> instead. It works in browsers such as Firefox and keeps the speech processing on your computer after the model is downloaded.</p>
     <div class="browser-warning-actions">
       <label><input id="browserWarningDontShow" type="checkbox"> Do not show again</label>
@@ -191,7 +191,68 @@ function savePdf(){
     msg("Could not create the PDF: "+e.message);
   }
 }
- async function start(){   msg("");paused=false;$("pause").textContent="Pause";   $("start").disabled=true;setStatus("Checking key…",false);   try{label=await connect()}   catch(e){msg(e.net?"Couldn’t reach the service to check your key. It may block direct browser requests, or you’re offline.":"Key check failed: "+e.message);setStatus("Idle",false);$("start").disabled=false;return} engine=pickEngine();   if(engine==="local"){     setStatus("Loading speech model…",false);     try{await loadWhisper()}     catch(e){msg("Couldn’t load the on-device speech model: "+e.message+". Check your connection, or use Chrome, Edge or Safari.");setStatus("Idle",false);$("start").disabled=false;return}   }   label+=" · "+({browser:"browser speech",local:"on-device Whisper",cloud:"cloud Whisper"})[engine];   chunks=[];txP=Promise.resolve();   running=true;lines=[];pending=[];notesMd="";$("txt").disabled=true;   $("tx").innerHTML="";$("notes").innerHTML='<p class="empty">Listening… first notes arrive shortly.</p>';   $("start").disabled=true;$("stop").disabled=false;$("pause").disabled=false;$("pdf").disabled=true;   setStatus("Listening · "+label,true);if(engine==="browser")startRec();startMeter();   timer=setInterval(()=>updateNotes(false),+$("interval").value*1000); } async function stop(save=true){   flushAudio();stopMeter();running=false;paused=false;$("pause").disabled=true;$("pause").textContent="Pause";clearInterval(timer);try{rec&&rec.stop()}catch(e){}   $("start").disabled=false;$("stop").disabled=true;setStatus("Finishing notes…",false);   showInterim("");   await txP;showInterim("");   while(busy)await new Promise(r=>setTimeout(r,300));   await updateNotes(true);   setStatus("Idle",false);   if(save&&notesMd)savePdf(); } function downloadTranscript(){   if(!lines.length)return;   const title=$("title").value||"Lecture Notes";   const body=title+"\n"+new Date().toLocaleString()+"\n\n"+lines.join("\n")+"\n";   const a=document.createElement("a");   a.href=URL.createObjectURL(new Blob([body],{type:"text/plain;charset=utf-8"}));   a.download=title.replace(/[^\w-]+/g,"\_")+"\_transcript.txt";   document.body.appendChild(a);a.click();a.remove();   setTimeout(()=>URL.revokeObjectURL(a.href),1000); } let aCtx=null,aStream=null,raf=0,lvl=0,lastSound=0; async function startMeter(){
+ async function start(){
+  msg("");
+  paused=false;
+  $("pause").textContent="Pause";
+
+  // Choose the transcription engine before checking for an AI key.
+  engine=pickEngine();
+
+  // Only Cloud Whisper needs an AI provider/key to start.
+  // Browser speech and On-device Whisper can start without an AI key.
+  if(engine==="cloud"){
+    $("start").disabled=true;
+    setStatus("Checking key…",false);
+    try{
+      label=await connect();
+    }catch(e){
+      msg(e.net
+        ?"Couldn’t reach the service to check your key. It may block direct browser requests, or you’re offline."
+        :"Key check failed: "+e.message);
+      setStatus("Idle",false);
+      $("start").disabled=false;
+      return;
+    }
+  }else{
+    label=engine==="browser" ? "Browser speech" : "On-device Whisper";
+  }
+
+  if(engine==="local"){
+    $("start").disabled=true;
+    setStatus("Loading speech model…",false);
+    try{
+      await loadWhisper();
+    }catch(e){
+      msg("Couldn’t load the on-device speech model: "+e.message+
+          ". Check your internet connection and try again.");
+      setStatus("Idle",false);
+      $("start").disabled=false;
+      return;
+    }
+  }
+
+  chunks=[];
+  txP=Promise.resolve();
+  running=true;
+  lines=[];
+  pending=[];
+  notesMd="";
+  $("txt").disabled=true;
+  $("tx").innerHTML="";
+  $("notes").innerHTML='<p class="empty">Listening… first notes arrive shortly.</p>';
+  $("start").disabled=true;
+  $("stop").disabled=false;
+  $("pause").disabled=false;
+  setStatus("Listening · "+label,true);
+
+  // Start these directly from the button click so browser microphone
+  // permission works correctly from a local HTML file.
+  if(engine==="browser") startRec();
+  startMeter();
+
+  timer=setInterval(()=>updateNotes(false),+$("interval").value*1000);
+} async function stop(save=true){   flushAudio();stopMeter();running=false;paused=false;$("pause").disabled=true;$("pause").textContent="Pause";clearInterval(timer);try{rec&&rec.stop()}catch(e){}   $("start").disabled=false;$("stop").disabled=true;setStatus("Finishing notes…",false);   showInterim("");   await txP;showInterim("");   while(busy)await new Promise(r=>setTimeout(r,300));   await updateNotes(true);   setStatus("Idle",false);   if(save&&notesMd)savePdf(); } function downloadTranscript(){   if(!lines.length)return;   const title=$("title").value||"Lecture Notes";   const body=title+"\n"+new Date().toLocaleString()+"\n\n"+lines.join("\n")+"\n";   const a=document.createElement("a");   a.href=URL.createObjectURL(new Blob([body],{type:"text/plain;charset=utf-8"}));   a.download=title.replace(/[^\w-]+/g,"\_")+"\_transcript.txt";   document.body.appendChild(a);a.click();a.remove();   setTimeout(()=>URL.revokeObjectURL(a.href),1000); } let aCtx=null,aStream=null,raf=0,lvl=0,lastSound=0; async function startMeter(){
   stopMeter();
   try{
     aStream=await navigator.mediaDevices.getUserMedia({audio:{
