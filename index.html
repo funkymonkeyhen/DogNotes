@@ -131,13 +131,14 @@ footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
 <div id="pageControls" aria-label="Page appearance controls">
   <label for="boxTransparency">Box transparency:</label>
   <input id="boxTransparency" type="range" min="10" max="95" value="42" step="1" aria-label="Box transparency">
-  <span id="boxTransparencyValue">42%</span>
+  
   <button id="refreshDog" type="button">Refresh dog</button>
+  <button id="barkButton" type="button">Bark</button>
+  <audio id="barkAudio" src="bark.mp3" preload="auto"></audio>
 </div>
 <script>
 const dogSize = document.getElementById("dogSize");
 const boxTransparency = document.getElementById("boxTransparency");
-const boxTransparencyValue = document.getElementById("boxTransparencyValue");
 const refreshDogButton = document.getElementById("refreshDog");
 function applyDogSize(){
   document.documentElement.style.setProperty("--dog-size", dogSize.value + "px");
@@ -145,7 +146,6 @@ function applyDogSize(){
 function applyBoxTransparency(){
   const alpha = Number(boxTransparency.value) / 100;
   document.documentElement.style.setProperty("--box-alpha", alpha.toFixed(2));
-  boxTransparencyValue.textContent = boxTransparency.value + "%";
 }
 dogSize.addEventListener("input", applyDogSize);
 boxTransparency.addEventListener("input", applyBoxTransparency);
@@ -172,6 +172,13 @@ async function loadRandomDog(){
   }
 }
 refreshDogButton.addEventListener("click", loadRandomDog);
+
+const barkButton = document.getElementById("barkButton");
+const barkAudio = document.getElementById("barkAudio");
+barkButton.addEventListener("click", () => {
+  barkAudio.currentTime = 0;
+  barkAudio.play().catch(() => {});
+});
 loadRandomDog();
 
 const $=id=>document.getElementById(id);
