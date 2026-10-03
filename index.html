@@ -34,8 +34,8 @@
 </style> </head> <body>
 <div id="browserWarning" class="browser-warning" role="dialog" aria-modal="true" aria-labelledby="browserWarningTitle">
   <div class="browser-warning-box">
-    <h2 id="browserWarningTitle">Browser speech recognition isn't available in this browser</h2>
-    <p>For the best experience, use Chrome or Edge because they provide built-in browser speech recognition.</p>
+    <h2 id="browserWarningTitle">Browser speech recognition isn't available</h2>
+    <p>For the best experience, use Chrome or Edge because they support built-in browser speech recognition.</p>
     <p>Firefox can still use <b>On-device Whisper</b>. It keeps speech processing on your computer after the model is downloaded, but it may use more computer resources than built-in browser speech recognition.</p>
     <div class="browser-warning-actions">
       <label><input id="browserWarningDontShow" type="checkbox"> Do not show again</label>
@@ -45,49 +45,33 @@
 </div>
  <a class="skip" href="#main">Skip to transcript and notes</a> <div class="brand">   <div class="brand-title"><img id="brandDog" src="https://thumbs.dreamstime.com/b/grappig-dansende-hond-met-trucjes-actieve-dans-kleine-witte-achtergrond-huisdier-161672443.jpg" alt="" aria-hidden="true"><div><h1>Dog Notes</h1><p>If your dog ever starts talking to you, you better take good notes!</p></div></div>  </div> <header>   <input id="title" value="Lecture Notes" aria-label="Lecture title">   <select id="prov" aria-label="AI provider">     <option value="auto" selected>Auto-detect provider</option>     <option value="gemini">Google Gemini</option>     <option value="openai">OpenAI (ChatGPT)</option>     <option value="anthropic">Anthropic Claude</option>     <option value="meta">Meta AI</option>     <option value="openrouter">OpenRouter (free models)</option>     <option value="groq">Groq</option>     <option value="cerebras">Cerebras</option>     <option value="mistral">Mistral</option>     <option value="xai">xAI Grok</option>     <option value="together">Together AI</option>     <option value="deepseek">DeepSeek</option>     <option value="local">Local (Ollama / LM Studio)</option>     <option value="custom">Other (OpenAI-compatible URL)</option>   </select>   <select id="stt" aria-label="Transcription method">     <option value="auto" selected>Transcription: auto</option>     <option value="browser">Browser speech (Chrome, Edge, Safari)</option>     <option value="local">On-device Whisper (works in Firefox)</option>     <option value="cloud">Cloud Whisper (Groq or OpenAI key)</option>   </select>   <input id="key" type="password" placeholder="Paste API key" aria-label="API key" autocomplete="current-password">   <label><input id="rememberKey" type="checkbox"> Remember key on this device</label>   <input id="base" hidden placeholder="Base URL, e.g. https://api.example.com/v1" aria-label="Base URL" style="flex:1 1 220px">   <select id="interval" aria-label="Notes update interval">     <option value="60">Notes every 1 min</option>     <option value="120" selected>Notes every 2 min</option>     <option value="180">Notes every 3 min</option>   </select>   <button id="start">Start listening</button>   <button id="pause" class="ghost" disabled>Pause</button>   <button id="stop" class="stop" disabled>Stop &amp; save Notes</button>   <div id="meterbox"><div id="meter" role="meter" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="100"><i></i></div><span id="mhint"></span></div>   <div><label for="dogSize">Dog background size: </label><input id="dogSize" type="range" min="25" max="600" value="315" step="5" aria-label="Dog background size"></div>   <div id="status" role="status"><span class="dot"></span><span id="st">Idle</span></div> </header> <div id="msg" role="alert"></div> <main id="main" tabindex="-1">   <section><div class="hd"><h2>Live transcript</h2><button id="txt" class="ghost" disabled>Download transcript</button></div><div class="body" id="tx" tabindex="0" aria-label="Live transcript"><p class="empty">Press “Start listening”, then play the lecture near your laptop’s microphone.</p></div></section>   <section><div class="hd"><h2>Notes</h2><div style="display:flex;align-items:center;gap:8px"><span id="upd" role="status"></span><button id="pdf" class="ghost" disabled>Save Notes</button></div></div><div class="body" tabindex="0" aria-label="Notes"><div id="notes"><p class="empty">Notes appear here and update as the lecture goes on.</p></div></div></section> </main> <footer>   <p>Dog pictures shown in the background and header are loaded from the internet and are not stored in or supplied by this page. A different random dog is requested each time the page opens.</p>   <p>Dog Notes is an independent hobby tool, not affiliated with Google, OpenAI, Anthropic, Meta, YouTube, or any AI provider or school. Notes are written by AI and may contain mistakes, so check them against official course material.</p>   <details>     <summary>Full disclaimer and privacy</summary>     <ul>       <li><b>No warranty.</b> Dog Notes is provided “as is” and “as available,” without warranties of any kind. You use it at your own risk. To the fullest extent the law allows, its creator is not liable for any loss or damage, including missed, incomplete or inaccurate notes, or any grades, decisions or outcomes that depend on them.</li>       <li><b>AI can be wrong.</b> Speech recognition and AI summaries can be inaccurate, incomplete or misleading. Do not rely on them for medical, legal, financial or safety decisions.</li>       <li><b>Your data.</b> Your browser’s speech recognition service turns audio into text (in Chrome, audio is sent to Google; with on-device Whisper it stays on your computer; with cloud Whisper it goes to Groq or OpenAI). The transcript text is then sent to the AI provider you choose (for example Google, OpenAI, Anthropic or Meta) using your own API key, under that provider’s terms and privacy policy. If you pick a local model, that text stays on your computer. This page has no server of its own and does not save your API key, transcript or notes unless you explicitly enable “Remember key on this device”; then the API key is stored in this browser’s local storage. It only remembers your text-size and contrast choices in your browser. Anything you download is yours to store safely.</li>       <li><b>Permission to record.</b> Recording or transcribing people may be regulated by law and by school or venue rules. You are responsible for getting any permission you need and for respecting copyright and school policies on lecture materials.</li>       <li><b>Your API key.</b> You are responsible for your own key and any usage limits or charges on it. Keep it private.</li>       <li>This notice is a general statement and is not legal advice.</li>     </ul>   </details> </footer> <div id="pageControls" aria-label="Page appearance controls">   <label for="boxTransparency">Box transparency:</label>   <input id="boxTransparency" type="range" min="10" max="100" value="100" step="1" aria-label="Box transparency">      <button id="refreshDog" type="button">Refresh dog</button>   <button id="barkButton" type="button">Bark</button>   <audio id="barkAudio" src="bark.mp3" preload="auto"></audio> </div> <script>
  const BROWSER_WARNING_KEY = "dog_notes_browser_speech_warning_hidden";
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  function browserWarningWasHidden(){
-    try { return localStorage.getItem(BROWSER_WARNING_KEY) === "1"; }
-    catch(e) { return false; }
+function browserWarningWasHidden(){
+  try { return localStorage.getItem(BROWSER_WARNING_KEY) === "1"; }
+  catch(e) { return false; }
+}
+
+function showBrowserSpeechWarning(){
+  if (SR || browserWarningWasHidden()) return;
+  const modal = document.getElementById("browserWarning");
+  if (modal) modal.classList.add("show");
+}
+
+function closeBrowserSpeechWarning(){
+  const dontShow = document.getElementById("browserWarningDontShow");
+  if (dontShow && dontShow.checked) {
+    try { localStorage.setItem(BROWSER_WARNING_KEY, "1"); }
+    catch(e) {}
   }
+  const modal = document.getElementById("browserWarning");
+  if (modal) modal.classList.remove("show");
+}
 
-  function showBrowserSpeechWarning(){
-    if (SR || browserWarningWasHidden()) return;
+const warningClose = document.getElementById("browserWarningClose");
+if (warningClose) warningClose.addEventListener("click", closeBrowserSpeechWarning);
 
-    // Native alert is used first so the warning reliably appears on page load.
-    const dontShow = confirm(
-      "Browser speech recognition is not available in Firefox.\n\n" +
-      "For the best experience, open Dog Notes in Chrome or Edge. " +
-      "Those browsers support built-in browser speech recognition.\n\n" +
-      "Firefox can still work using On-device Whisper, but it must " +
-      "download a speech model and may use more computer resources.\n\n" +
-      "Click OK to continue with Firefox.\n" +
-      "Click Cancel if you want to switch to Chrome or Edge."
-    );
-
-    if (!dontShow) {
-      // Keep the page usable; the message is informational.
-    }
-
-    // The checkbox is displayed by the page immediately after the native notice.
-    const modal = document.getElementById("browserWarning");
-    if (modal) modal.classList.add("show");
-  }
-
-  function closeBrowserSpeechWarning(){
-    const dontShow = document.getElementById("browserWarningDontShow");
-    if (dontShow && dontShow.checked) {
-      try { localStorage.setItem(BROWSER_WARNING_KEY, "1"); } catch(e) {}
-    }
-    const modal = document.getElementById("browserWarning");
-    if (modal) modal.classList.remove("show");
-  }
-
-  const warningClose = document.getElementById("browserWarningClose");
-  if (warningClose) warningClose.addEventListener("click", closeBrowserSpeechWarning);
-
-  const dogSize = document.getElementById("dogSize"); const boxTransparency = document.getElementById("boxTransparency"); const refreshDogButton = document.getElementById("refreshDog"); function applyDogSize(){   document.documentElement.style.setProperty("--dog-size", dogSize.value + "px"); } function applyBoxTransparency(){   const alpha = Number(boxTransparency.value) / 100;   document.documentElement.style.setProperty("--box-alpha", alpha.toFixed(2)); } dogSize.addEventListener("input", applyDogSize); boxTransparency.addEventListener("input", applyBoxTransparency); applyDogSize(); applyBoxTransparency();  // Load a random dog image. This works from both file:// and GitHub Pages because the browser loads the image directly.
+const dogSize = document.getElementById("dogSize"); const boxTransparency = document.getElementById("boxTransparency"); const refreshDogButton = document.getElementById("refreshDog"); function applyDogSize(){   document.documentElement.style.setProperty("--dog-size", dogSize.value + "px"); } function applyBoxTransparency(){   const alpha = Number(boxTransparency.value) / 100;   document.documentElement.style.setProperty("--box-alpha", alpha.toFixed(2)); } dogSize.addEventListener("input", applyDogSize); boxTransparency.addEventListener("input", applyBoxTransparency); applyDogSize(); applyBoxTransparency();  // Load a random dog image. This works from both file:// and GitHub Pages because the browser loads the image directly.
  async function loadRandomDog(){
    refreshDogButton.disabled = true;
    const url = "https://placedog.net/1000/1000?random=" + Date.now();
@@ -253,4 +237,12 @@ function savePdf(){
     $("mhint").textContent="Level meter unavailable";
   }
 }
-function stopMeter(){   cancelAnimationFrame(raf);clearInterval(cutTimer);   if(aStream)aStream.getTracks().forEach(t=>t.stop());   if(aCtx)aCtx.close().catch(()=>{});   aStream=aCtx=null;lvl=0;   $("meter").firstElementChild.style.width="0";$("mhint").textContent="";$("mhint").className=""; } function togglePause(){   if(!running)return;   paused=!paused;   if(paused){try{rec.stop()}catch(e){}showInterim("");flushAudio();stopMeter();setStatus("Paused · "+label,false);$("pause").textContent="Resume"}   else{if(engine==="browser")startRec();startMeter();setStatus("Listening · "+label,true);$("pause").textContent="Pause"} }  $("prov").onchange=()=>{   const v=$("prov").value,b=$("base");b.hidden=!(v==="custom"||v==="local");   b.value=v==="local"?P.local.base:"";   $("key").placeholder=v==="local"?"API key (optional for local models)":"Paste API key"; }; $("pause").onclick=togglePause;$("txt").onclick=downloadTranscript; $("rememberKey").onchange=saveRememberedKey; $("key").addEventListener("input",()=>{if($("rememberKey").checked)saveRememberedKey()}); loadRememberedKey(); showBrowserSpeechWarning(); $("start").onclick=start;$("stop").onclick=()=>stop(true);$("pdf").onclick=savePdf; </script> </body> </html>   
+function stopMeter(){   cancelAnimationFrame(raf);clearInterval(cutTimer);   if(aStream)aStream.getTracks().forEach(t=>t.stop());   if(aCtx)aCtx.close().catch(()=>{});   aStream=aCtx=null;lvl=0;   $("meter").firstElementChild.style.width="0";$("mhint").textContent="";$("mhint").className=""; } function togglePause(){   if(!running)return;   paused=!paused;   if(paused){try{rec.stop()}catch(e){}showInterim("");flushAudio();stopMeter();setStatus("Paused · "+label,false);$("pause").textContent="Resume"}   else{if(engine==="browser")startRec();startMeter();setStatus("Listening · "+label,true);$("pause").textContent="Pause"} }  $("prov").onchange=()=>{   const v=$("prov").value,b=$("base");b.hidden=!(v==="custom"||v==="local");   b.value=v==="local"?P.local.base:"";   $("key").placeholder=v==="local"?"API key (optional for local models)":"Paste API key"; }; $("pause").onclick=togglePause;$("txt").onclick=downloadTranscript; $("rememberKey").onchange=saveRememberedKey; $("key").addEventListener("input",()=>{if($("rememberKey").checked)saveRememberedKey()}); loadRememberedKey(); showBrowserSpeechWarning(); $("start").addEventListener("click", function(){
+  start().catch(function(e){
+    console.error("Dog Notes start error:", e);
+    msg("Could not start listening: " + (e && e.message ? e.message : e));
+    $("start").disabled = false;
+    $("stop").disabled = true;
+    setStatus("Idle", false);
+  });
+});$("stop").onclick=()=>stop(true);$("pdf").onclick=savePdf; </script> </body> </html>   
