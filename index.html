@@ -20,6 +20,9 @@ button:disabled{opacity:.55}
 #meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ae6427,#e5cd6c 70%,var(--rec));background-size:110px 100%}
 #mhint{font-size:12px;color:var(--mute)}
 #mhint.warn{color:var(--rec)}
+#notesMode{display:flex;align-items:center;gap:10px;border:0;margin:0;padding:0}
+#notesMode legend{float:left;padding:0;margin-right:2px}
+#notesMode label{display:inline-flex;align-items:center;gap:4px;cursor:pointer}
 #status{display:flex;align-items:center;gap:7px;color:var(--mute);font-size:13px;margin-left:auto}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--line)}
 .live .dot{background:var(--rec);animation:p 1.2s infinite}
@@ -95,6 +98,10 @@ footer ul{margin:6px 0 0;padding-left:1.2em}footer li{margin:3px 0}
   <input id="key" type="password" placeholder="Paste API key" aria-label="API key" autocomplete="current-password">
   <label><input id="rememberKey" type="checkbox"> Remember key on this device</label>
   <input id="base" hidden placeholder="Base URL, e.g. https://api.example.com/v1" aria-label="Base URL" style="flex:1 1 220px">
+  <fieldset id="notesMode"><legend>Notes:</legend>
+    <label><input type="radio" name="notesMode" value="live" checked> Live</label>
+    <label><input type="radio" name="notesMode" value="manual"> Manual (when it's over)</label>
+  </fieldset>
   <select id="interval" aria-label="Notes update interval">
     <option value="60">Notes every 1 min</option>
     <option value="120" selected>Notes every 2 min</option>
@@ -193,6 +200,13 @@ Return the COMPLETE updated notes in Markdown, merging the new material in:
 - Do not repeat information. Output ONLY the Markdown notes.`;
 
 let rec=null,running=false,lines=[],pending=[],notesMd="",busy=false,timer=null;
+const notesMode=()=>document.querySelector('input[name="notesMode"]:checked').value;
+function setupNotesTimer(){
+  clearInterval(timer);timer=null;
+  const live=notesMode()==="live";
+  $("interval").disabled=!live;
+  if(running&&live)timer=setInterval(()=>updateNotes(false),+$("interval").value*1000);
+}
 let prov=null,KEY="",models=[],mi=0,label="",paused=false;
 
 // Optional local browser storage for the API key. This stays on this device/browser.
@@ -451,11 +465,14 @@ async function updateNotes(final){
 }
 
 function savePdf(){
-  const {jsPDF}=window.jspdf;if(!jsPDF){msg("PDF library failed to load. Check your connection.");return}
+  const jsPDF=window.jspdf&&window.jspdf.jsPDF;
+  if(!jsPDF){msg("PDF library failed to load. Check your connection and reload the page.");return}
+  if(!notesMd){msg("No notes yet. Generate some notes first.");return}
+  try{
   const d=new jsPDF({unit:"pt",format:"letter"}),M=60,W=612-2*M;let y=M;
   const clean=s=>s.replace(/\*\*|`/g,"").replace(/\*/g,"").replace(/→/g,"->").replace(/≈/g,"~").replace(/≤/g,"<=").replace(/≥/g,">=").replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[^\x00-\xFF•–—]/g,"?");
   const w=(txt,size,style,ind=0,gap=4,color=20,bullet=false)=>{
-    d.setFont("helvetica",style);d.setFontSize(size);d.setTextColor(color);
+    d.setFont("helvetica",style);d.setFontSize(size);Array.isArray(color)?d.setTextColor(color[0],color[1],color[2]):d.setTextColor(color);
     const ls=d.splitTextToSize(clean(txt),W-ind);
     ls.forEach((l,i)=>{if(y+size*1.4>792-M){d.addPage();y=M}
       if(bullet&&i===0)d.text("•",M+ind-12,y);d.text(l,M+ind,y);y+=size*1.4});
@@ -479,7 +496,8 @@ function savePdf(){
   for(let i=1;i<=pc;i++){d.setPage(i);d.setFont("helvetica","normal");d.setFontSize(8);d.setTextColor(130);
     d.text("Made with Dog Notes. AI-generated notes may contain errors.",M,792-30);
     d.text(i+" / "+pc,612-M,792-30,{align:"right"})}
-  d.save(title.replace(/[^\w-]+/g,"_")+".pdf");
+  d.save((title.replace(/[^\w-]+/g,"_")||"notes")+".pdf");
+  }catch(e){msg("Couldn’t create the PDF: "+e.message)}
 }
 
 async function start(){
@@ -496,10 +514,10 @@ engine=pickEngine();
   label+=" · "+({browser:"browser speech",local:"on-device Whisper",cloud:"cloud Whisper"})[engine];
   chunks=[];txP=Promise.resolve();
   running=true;lines=[];pending=[];notesMd="";$("txt").disabled=true;
-  $("tx").innerHTML="";$("notes").innerHTML='<p class="empty">Listening… first notes arrive shortly.</p>';
+  $("tx").innerHTML="";$("notes").innerHTML=notesMode()==="live"?'<p class="empty">Listening… first notes arrive shortly.</p>':'<p class="empty">Listening… notes will be generated when you press Stop.</p>';
   $("start").disabled=true;$("stop").disabled=false;$("pause").disabled=false;$("pdf").disabled=true;
   setStatus("Listening · "+label,true);if(engine==="browser")startRec();startMeter();
-  timer=setInterval(()=>updateNotes(false),+$("interval").value*1000);
+  setupNotesTimer();
 }
 async function stop(save=true){
   flushAudio();stopMeter();running=false;paused=false;$("pause").disabled=true;$("pause").textContent="Pause";clearInterval(timer);try{rec&&rec.stop()}catch(e){}
@@ -568,6 +586,9 @@ $("prov").onchange=()=>{
   b.value=v==="local"?P.local.base:"";
   $("key").placeholder=v==="local"?"API key (optional for local models)":"Paste API key";
 };
+document.querySelectorAll('input[name="notesMode"]').forEach(r=>r.addEventListener("change",setupNotesTimer));
+$("interval").addEventListener("change",setupNotesTimer);
+setupNotesTimer();
 $("pause").onclick=togglePause;$("txt").onclick=downloadTranscript;
 $("rememberKey").onchange=saveRememberedKey;
 $("key").addEventListener("input",()=>{if($("rememberKey").checked)saveRememberedKey()});
